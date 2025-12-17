@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hayvan Hücresi</title>
+<title>3D Hayvan Hücresi Projesi</title>
 <style>
 /* ======================================================================
    AYARLAR & RESET
@@ -17,7 +17,9 @@
     --c-golgi: #aa00ff;
     --c-er: #0077ff;
     --c-lys: #ccff00;
-    --c-cent: #00ffcc; /* Parlak Neon Turkuaz */
+    --c-cent: #00ffcc;
+    --c-vacuole: #00aaff; /* Koful Rengi */
+    --c-perox: #ff5500;  /* Peroksizom Rengi */
 }
 
 *, *::before, *::after {
@@ -32,14 +34,13 @@ body {
     height: 100vh;
     width: 100vw;
     overflow: hidden;
-    font-family: 'Segoe UI', sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
     perspective: 1200px;
 }
 
-/* Arka Plan */
 .bg-grid {
     position: absolute;
     width: 200vw; height: 200vh;
@@ -62,7 +63,6 @@ body {
     transition: transform 0.1s linear;
 }
 
-/* HÜCRE ZARI (Hayvan Hücresi: Yuvarlak ve Esnek) */
 .cell-membrane {
     position: absolute;
     width: 100%; height: 100%;
@@ -73,17 +73,15 @@ body {
     box-shadow: 
         0 0 50px rgba(0, 255, 220, 0.15),
         inset 0 0 80px rgba(0, 255, 220, 0.1);
-    border: 1px solid rgba(0, 255, 220, 0.2);
+    border: 2px dashed rgba(0, 255, 220, 0.2);
     transform-style: preserve-3d;
     cursor: pointer;
-    /* Zarı arkaya itiyoruz, organeller öne çıksın */
     transform: translateZ(-10px); 
 }
 
 /* ======================================================================
-   ORGANELLER (HOVER EFEKTLERİ TAMAMEN SİLİNDİ)
+   ORGANELLER
 ====================================================================== */
-
 .organelle-wrapper {
     position: absolute;
     transform-style: preserve-3d;
@@ -95,12 +93,8 @@ body {
 .organelle-content {
     position: relative;
     transform-style: preserve-3d;
-    cursor: pointer; /* Tıklanabilir olduğu belli olsun */
-    /* Filter transition sildik, çünkü hover yok */
+    cursor: pointer;
 }
-
-/* DİKKAT: .organelle-wrapper:hover BLOĞU TAMAMEN SİLİNDİ */
-/* Artık mouse ile üzerine gelince hiçbir stil değişmeyecek. */
 
 /* --- 1. ÇEKİRDEK --- */
 .w-nucleus { top: 50%; left: 50%; width: 160px; height: 160px; margin-top: -80px; margin-left: -80px; transform: translateZ(40px); }
@@ -113,7 +107,7 @@ body {
 .nucleolus { width: 50px; height: 50px; border-radius: 50%; background: white; box-shadow: 0 0 20px white; }
 
 /* --- 2. MİTOKONDRİ --- */
-.w-mito { width: 80px; height: 40px; }
+.w-mito { width: 70px; height: 35px; }
 .c-mito {
     width: 100%; height: 100%; border-radius: 20px;
     background: linear-gradient(45deg, var(--c-mito), #884400);
@@ -123,67 +117,81 @@ body {
 }
 .c-mito::after {
     content: ''; position: absolute; top:0; left:0; width:100%; height:100%;
-    background: repeating-linear-gradient(90deg, transparent, transparent 5px, rgba(0,0,0,0.5) 5px, rgba(0,0,0,0.5) 8px);
+    background: repeating-linear-gradient(90deg, transparent, transparent 4px, rgba(0,0,0,0.4) 4px, rgba(0,0,0,0.4) 7px);
 }
-.pos-mito-1 { top: 20%; left: 30%; transform: rotate(30deg) translateZ(20px); }
-.pos-mito-2 { top: 75%; left: 65%; transform: rotate(-20deg) translateZ(-10px); }
-.pos-mito-3 { top: 25%; left: 75%; transform: rotate(45deg) translateZ(10px); }
+.pos-mito-1 { top: 22%; left: 28%; transform: rotate(30deg) translateZ(20px); }
+.pos-mito-2 { top: 72%; left: 68%; transform: rotate(-25deg) translateZ(-15px); }
 
 /* --- 3. GOLGİ --- */
-.w-golgi { top: 65%; left: 20%; width: 100px; height: 80px; transform: rotate(-10deg) translateZ(30px); }
+.w-golgi { top: 68%; left: 22%; width: 90px; height: 70px; transform: rotate(-15deg) translateZ(35px); }
 .c-golgi { width: 100%; height: 100%; position: relative; }
 .golgi-layer {
-    position: absolute; height: 15px;
+    position: absolute; height: 12px;
     background: var(--c-golgi); border-radius: 10px;
     box-shadow: 0 0 8px var(--c-golgi);
-    backface-visibility: hidden;
 }
 
-/* --- 4. ER --- */
-.w-er { top: 15%; left: 60%; width: 130px; height: 100px; transform: translateZ(-20px); }
+/* --- 4. ER (Granüllü) --- */
+.w-er { top: 18%; left: 58%; width: 120px; height: 90px; transform: translateZ(-25px); }
 .c-er { width: 100%; height: 100%; position: relative; }
 .er-tube {
-    position: absolute; height: 18px;
+    position: absolute; height: 16px;
     background: var(--c-er); border-radius: 10px;
-    box-shadow: 0 0 10px var(--c-er); opacity: 0.8;
+    box-shadow: 0 0 8px var(--c-er); opacity: 0.8;
 }
 
 /* --- 5. LİZOZOM --- */
-.w-lys { top: 80%; left: 50%; transform: translateZ(50px); }
+.w-lys { top: 78%; left: 45%; transform: translateZ(45px); }
 .c-lys {
-    width: 45px; height: 45px; border-radius: 50%;
+    width: 40px; height: 40px; border-radius: 50%;
     background: radial-gradient(circle at 30% 30%, #eeff00, #556600);
-    box-shadow: 0 0 20px var(--c-lys);
+    box-shadow: 0 0 15px var(--c-lys);
 }
 
-/* --- 6. SENTROZOM (Hayvan Hücresinin Alametifarikası) --- */
-.w-cent { 
-    top: 35%; left: 25%; 
-    width: 80px; height: 80px; 
-    display: flex; justify-content: center; align-items: center;
-}
-.c-cent { position: relative; width: 40px; height: 40px; }
+/* --- 6. SENTROZOM --- */
+.w-cent { top: 32%; left: 22%; width: 70px; height: 70px; }
+.c-cent { position: relative; width: 35px; height: 35px; }
 .cent-tube {
-    position: absolute; width: 35px; height: 12px;
-    /* Rengini ve parlaklığını artırdık çünkü artık hover yok, hep parlak olmalı */
+    position: absolute; width: 30px; height: 10px;
     background: repeating-linear-gradient(90deg, #00ffcc, #00ffcc 3px, #004433 3px, #004433 6px);
-    box-shadow: 0 0 20px #00ffcc, 0 0 5px white; 
+    box-shadow: 0 0 15px #00ffcc;
+}
+
+/* --- 7. KOFUL (Hayvan Hücresinde Küçük) --- */
+.w-vac { width: 30px; height: 30px; }
+.c-vac {
+    width: 100%; height: 100%; border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+    background: rgba(0, 170, 255, 0.4);
+    border: 1px solid var(--c-vacuole);
+    box-shadow: inset 0 0 10px var(--c-vacuole);
+}
+.pos-vac-1 { top: 40%; left: 75%; transform: translateZ(10px); }
+.pos-vac-2 { top: 85%; left: 30%; transform: translateZ(20px); }
+
+/* --- 8. PEROKSİZOM --- */
+.w-perox { top: 15%; left: 45%; transform: translateZ(10px); }
+.c-perox {
+    width: 25px; height: 25px; border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, #ffaa00, #aa3300);
+    box-shadow: 0 0 10px var(--c-perox);
+}
+
+/* --- 9. RİBOZOM (Serbest) --- */
+.w-ribo-free { width: 8px; height: 8px; }
+.c-ribo-free {
+    width: 100%; height: 100%; border-radius: 50%;
+    background: #00ffff; box-shadow: 0 0 5px #00ffff;
 }
 
 /* ======================================================================
-   PARTİKÜLLER
+   PARTİKÜLLER & SİTOPLAZMA
 ====================================================================== */
-.particle {
-    position: absolute; border-radius: 50%; pointer-events: none; background: white;
-}
-.p-dust { width: 2px; height: 2px; opacity: 0.4; }
-.p-ribo { width: 3px; height: 3px; background: cyan; box-shadow: 0 0 4px cyan; }
-.p-prot { width: 4px; height: 4px; opacity: 0.6; box-shadow: 0 0 5px white; }
+.particle { position: absolute; border-radius: 50%; pointer-events: none; background: white; }
+.p-ribo { width: 4px; height: 4px; background: cyan; box-shadow: 0 0 4px cyan; opacity: 0.8; }
 
 @keyframes particle-float {
-    0% { transform: translate(0, 0); }
-    50% { transform: translate(10px, -15px); }
-    100% { transform: translate(0, 0); }
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(15px, -20px); }
 }
 
 /* ======================================================================
@@ -191,27 +199,38 @@ body {
 ====================================================================== */
 .overlay {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.6);
+    background: rgba(0,0,0,0.75);
     display: flex; justify-content: center; align-items: center;
     opacity: 0; visibility: hidden;
-    transition: 0.2s;
-    z-index: 2000; /* Popup her şeyin en üstünde */
-    backdrop-filter: blur(5px);
+    transition: 0.3s; z-index: 2000;
+    backdrop-filter: blur(8px);
 }
 .overlay.active { opacity: 1; visibility: visible; }
 
 .popup {
-    width: 450px;
-    background: rgba(20, 25, 35, 0.95);
-    border: 1px solid rgba(255,255,255,0.1);
-    padding: 30px; border-radius: 10px;
-    box-shadow: 0 0 50px rgba(0,0,0,0.8);
-    color: #eee;
-    position: relative;
+    width: 480px;
+    background: linear-gradient(145deg, #1a1f2c, #0d1117);
+    border: 1px solid rgba(0, 255, 220, 0.3);
+    padding: 35px; border-radius: 20px;
+    box-shadow: 0 0 60px rgba(0, 255, 220, 0.1);
+    color: #eee; position: relative;
 }
 
-.popup h2 { color: var(--c-glow); border-bottom: 1px solid #444; padding-bottom: 10px; margin-bottom: 15px; }
-.btn-close { position: absolute; top: 15px; right: 15px; background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; }
+.popup h2 { 
+    color: var(--c-glow); 
+    font-size: 1.8rem;
+    border-bottom: 2px solid rgba(0, 255, 220, 0.2); 
+    padding-bottom: 15px; margin-bottom: 20px; 
+}
+
+.popup p { line-height: 1.6; font-size: 1.1rem; color: #ccc; }
+
+.btn-close { 
+    position: absolute; top: 20px; right: 20px; 
+    background: none; border: none; color: #666; 
+    font-size: 2rem; cursor: pointer; transition: 0.2s;
+}
+.btn-close:hover { color: #ff0055; }
 
 </style>
 </head>
@@ -219,9 +238,9 @@ body {
 
     <div class="bg-grid"></div>
 
-    <div style="position:absolute; top:30px; left:30px; color:white; pointer-events:none; z-index: 200;">
-        <h1>HAYVAN HÜCRESİ</h1>
-        <p style="color: var(--c-glow); font-size: 1.75rem;">KONULU BİR PROJE</p>
+    <div style="position:absolute; top:40px; left:40px; color:white; pointer-events:none; z-index: 200;">
+        <h1 style="letter-spacing: 2px;">BİYOLOJİ: HAYVAN HÜCRESİ</h1>
+        <p style="color: var(--c-glow); font-size: 1.4rem; opacity: 0.8;">İnteraktif 3D Model</p>
     </div>
 
     <div class="scene" id="scene">
@@ -229,62 +248,49 @@ body {
         <div class="cell-membrane" data-type="membrane"></div>
 
         <div class="organelle-wrapper w-nucleus" data-type="nucleus">
-            <div class="organelle-content c-nucleus">
-                <div class="nucleolus"></div>
-            </div>
+            <div class="organelle-content c-nucleus"><div class="nucleolus"></div></div>
         </div>
 
         <div class="organelle-wrapper pos-mito-1" data-type="mitochondria"><div class="organelle-content c-mito"></div></div>
         <div class="organelle-wrapper pos-mito-2" data-type="mitochondria"><div class="organelle-content c-mito"></div></div>
-        <div class="organelle-wrapper pos-mito-3" data-type="mitochondria"><div class="organelle-content c-mito"></div></div>
 
         <div class="organelle-wrapper w-golgi" data-type="golgi">
             <div class="organelle-content c-golgi">
                 <div class="golgi-layer" style="top:0; width:80%; left:10%;"></div>
-                <div class="golgi-layer" style="top:20px; width:90%; left:5%;"></div>
-                <div class="golgi-layer" style="top:40px; width:100%; left:0%;"></div>
-                <div class="golgi-layer" style="top:60px; width:70%; left:15%;"></div>
+                <div class="golgi-layer" style="top:18px; width:100%; left:0%;"></div>
+                <div class="golgi-layer" style="top:36px; width:70%; left:15%;"></div>
             </div>
         </div>
 
         <div class="organelle-wrapper w-er" data-type="er">
             <div class="organelle-content c-er">
-                <div class="er-tube" style="width:100px; top:0; transform:rotate(10deg);"></div>
-                <div class="er-tube" style="width:110px; top:25px; left:-10px; transform:rotate(-5deg);"></div>
-                <div class="er-tube" style="width:90px; top:50px; left:10px; transform:rotate(5deg);"></div>
-                <div class="er-tube" style="width:80px; top:75px; left:5px; transform:rotate(-2deg);"></div>
+                <div class="er-tube" style="width:100px; top:0; transform:rotate(8deg);"></div>
+                <div class="er-tube" style="width:110px; top:25px; transform:rotate(-4deg);"></div>
+                <div class="er-tube" style="width:90px; top:50px; transform:rotate(3deg);"></div>
             </div>
         </div>
 
-        <div class="organelle-wrapper w-lys" data-type="lysosome">
-            <div class="organelle-content c-lys"></div>
-        </div>
+        <div class="organelle-wrapper w-lys" data-type="lysosome"><div class="organelle-content c-lys"></div></div>
 
         <div class="organelle-wrapper w-cent" data-type="centriole">
             <div class="organelle-content c-cent">
-                <div class="cent-tube" style="transform: rotate(0deg); top: 14px;"></div>
-                <div class="cent-tube" style="transform: rotate(90deg); top: 14px; left: 0;"></div>
+                <div class="cent-tube" style="transform: rotate(0deg); top: 12px;"></div>
+                <div class="cent-tube" style="transform: rotate(90deg); top: 12px; left: 0;"></div>
             </div>
         </div>
 
-        <div class="particle p-dust" style="top:10%; left:20%; transform:translateZ(-50px); animation:particle-float 10s infinite;"></div>
-        <div class="particle p-dust" style="top:80%; left:80%; transform:translateZ(-40px); animation:particle-float 12s infinite;"></div>
-        <div class="particle p-dust" style="top:50%; left:10%; transform:translateZ(-60px); animation:particle-float 15s infinite;"></div>
-        <div class="particle p-ribo" style="top:30%; left:40%; animation:particle-float 5s infinite;"></div>
-        <div class="particle p-ribo" style="top:60%; left:70%; animation:particle-float 6s infinite;"></div>
-        <div class="particle p-ribo" style="top:70%; left:20%; animation:particle-float 7s infinite;"></div>
-        <div class="particle p-ribo" style="top:20%; left:80%; animation:particle-float 8s infinite;"></div>
-        <div class="particle p-ribo" style="top:45%; left:55%; animation:particle-float 9s infinite;"></div>
-        <div class="particle p-prot" style="top:40%; left:90%; transform:translateZ(60px); animation:particle-float 11s infinite;"></div>
-        <div class="particle p-prot" style="top:15%; left:35%; transform:translateZ(40px); animation:particle-float 13s infinite;"></div>
-        <div class="particle p-prot" style="top:85%; left:45%; transform:translateZ(50px); animation:particle-float 14s infinite;"></div>
-        <div class="particle p-dust" style="top:12%; left:88%; transform:translateZ(-10px);"></div>
-        <div class="particle p-dust" style="top:92%; left:12%; transform:translateZ(10px);"></div>
-        <div class="particle p-ribo" style="top:52%; left:32%; transform:translateZ(20px);"></div>
-        <div class="particle p-ribo" style="top:22%; left:62%; transform:translateZ(-20px);"></div>
-        <div class="particle p-dust" style="top:72%; left:52%; transform:translateZ(30px);"></div>
-        <div class="particle p-dust" style="top:32%; left:82%; transform:translateZ(-30px);"></div>
-        
+        <div class="organelle-wrapper pos-vac-1" data-type="vacuole"><div class="organelle-content c-vac"></div></div>
+        <div class="organelle-wrapper pos-vac-2" data-type="vacuole"><div class="organelle-content c-vac"></div></div>
+
+        <div class="organelle-wrapper w-perox" data-type="peroxisome"><div class="organelle-content c-perox"></div></div>
+
+        <div class="organelle-wrapper" style="top:30%; left:70%;" data-type="ribosome"><div class="organelle-content c-ribo-free"></div></div>
+        <div class="organelle-wrapper" style="top:60%; left:40%;" data-type="ribosome"><div class="organelle-content c-ribo-free"></div></div>
+        <div class="organelle-wrapper" style="top:25%; left:35%;" data-type="ribosome"><div class="organelle-content c-ribo-free"></div></div>
+
+        <div class="particle p-ribo" style="top:20%; left:20%; animation: particle-float 8s infinite;"></div>
+        <div class="particle p-ribo" style="top:80%; left:70%; animation: particle-float 10s infinite;"></div>
+        <div class="particle p-ribo" style="top:50%; left:85%; animation: particle-float 12s infinite;"></div>
     </div>
 
     <div class="overlay" id="overlay">
@@ -296,15 +302,47 @@ body {
     </div>
 
 <script>
-    // VERİ (HAYVAN HÜCRESİ ODAKLI)
     const data = {
-        nucleus: { title: "Çekirdek", text: "Hücrenin yönetim ve kalıtım merkezi. DNA'yı barındırır. Hayvan hücrelerinde genellikle merkezde bulunur." },
-        mitochondria: { title: "Mitokondri", text: "Hücrenin enerji santrali. Oksijenli solunum yaparak ATP üretir." },
-        golgi: { title: "Golgi Aygıtı", text: "Salgı üretim ve paketleme merkezi. Glikoprotein sentezi yapar." },
-        er: { title: "Endoplazmik Retikulum", text: "Hücre içi madde iletimini sağlar. Granüllü ve Granülsüz olarak ikiye ayrılır." },
-        lysosome: { title: "Lizozom", text: "Hücre içi sindirim yapar. Özellikle hayvan hücrelerinde bolca bulunur. Yaşlı organelleri parçalar." },
-        centriole: { title: "Sentrozom", text: "SADECE HAYVAN HÜCRELERİNDE (ve ilkel bitkilerde) bulunur. Hücre bölünmesi sırasında iğ ipliklerini oluşturur." },
-        membrane: { title: "Hücre Zarı", text: "Hücreyi korur ve şekil verir. Hayvan hücrelerinde hücre duvarı olmadığı için şekil esnektir." }
+        nucleus: { 
+            title: "Çekirdek (Nucleus)", 
+            text: "Hücrenin yönetim merkezidir. İçindeki DNA sayesinde kalıtım ve tüm hayatsal faaliyetleri (büyüme, bölünme) denetler. Ortasındaki beyaz kısım çekirdekçiktir (RNA sentezi yapar)." 
+        },
+        mitochondria: { 
+            title: "Mitokondri", 
+            text: "Hücrenin 'enerji santrali'dir. Oksijenli solunum yaparak hücrenin ihtiyacı olan ATP'yi (enerji) üretir. Kendi DNA'sı vardır ve çoğalabilir." 
+        },
+        golgi: { 
+            title: "Golgi Aygıtı", 
+            text: "Salgı maddelerinin (enzim, hormon, mukus) üretilmesi, paketlenmesi ve salgılanmasından sorumludur. Üst üste dizilmiş yassı keseciklerden oluşur." 
+        },
+        er: { 
+            title: "Endoplazmik Retikulum", 
+            text: "Hücre içinde madde iletimini sağlayan kanal sistemidir. Çekirdek zarı ile hücre zarı arasındadır. Protein ve yağ sentezinde rol oynar." 
+        },
+        lysosome: { 
+            title: "Lizozom", 
+            text: "Hücre içi sindirim merkezidir. İçindeki güçlü enzimlerle büyük molekülleri parçalar. Hayvan hücrelerinde bulunur, bitki hücrelerinde genellikle yoktur." 
+        },
+        centriole: { 
+            title: "Sentrozom", 
+            text: "Hücre bölünmesi sırasında iğ ipliklerini oluşturarak kromozomların ayrılmasını sağlar. Hayvan hücresinin en karakteristik organellerinden biridir." 
+        },
+        vacuole: { 
+            title: "Koful", 
+            text: "Hücrede besin, atık veya su depolar. Hayvan hücrelerinde bitki hücrelerine göre çok daha KÜÇÜK ve SAYICA FAZLA olmaları ayırt edici bir özelliktir." 
+        },
+        peroxisome: { 
+            title: "Peroksizom", 
+            text: "Zehirli maddeleri etkisiz hale getirir. Özellikle zehirli olan Hidrojen Peroksit'i (H2O2) parçalayarak su ve oksijene dönüştüren katalaz enzimine sahiptir." 
+        },
+        ribosome: { 
+            title: "Ribozom", 
+            text: "Hücrenin en küçük organelidir. Görevi protein sentezlemektir. Tüm canlı hücrelerde ortak olarak bulunur. Hem sitoplazmada serbest hem de ER üzerinde bulunabilir." 
+        },
+        membrane: { 
+            title: "Hücre Zarı", 
+            text: "Hücreyi dış ortamdan ayırır, korur ve şekil verir. 'Seçici geçirgen' özelliğe sahiptir; hücreye neyin girip çıkacağına karar verir. Esnek bir yapıdadır." 
+        }
     };
 
     const scene = document.getElementById('scene');
@@ -312,15 +350,15 @@ body {
     const pTitle = document.getElementById('pTitle');
     const pDesc = document.getElementById('pDesc');
 
-    // MOUSE HAREKETİ
+    // MOUSE HAREKETİ (3D Efekti)
     document.addEventListener('mousemove', (e) => {
         if(overlay.classList.contains('active')) return; 
         const x = (e.clientX / window.innerWidth - 0.5) * 2;
         const y = (e.clientY / window.innerHeight - 0.5) * 2;
-        scene.style.transform = `rotateY(${x * 10}deg) rotateX(${y * -10}deg)`;
+        scene.style.transform = `rotateY(${x * 12}deg) rotateX(${y * -12}deg)`;
     });
 
-    // TIKLAMA
+    // TIKLAMA OLAYI
     document.querySelectorAll('.organelle-wrapper, .cell-membrane').forEach(el => {
         el.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -344,7 +382,7 @@ body {
             if (i < text.length) {
                 el.textContent += text.charAt(i);
                 i++;
-                setTimeout(type, 20);
+                setTimeout(type, 15);
             }
         }
         type();
